@@ -2,8 +2,7 @@ import { Clipboard, closeMainWindow, Detail, LaunchProps, popToRoot, showHUD } f
 import { showFailureToast } from "@raycast/utils";
 import { callbackLaunchCommand, LaunchOptions } from "raycast-cross-extension";
 import { useEffect } from "react";
-import { pickColor } from "swift:../swift/color-picker";
-import { addToHistory } from "./history";
+import { addToHistory } from "./lib/history";
 import { Color } from "./types";
 import { getFormattedColor } from "./utils";
 
@@ -17,6 +16,8 @@ export default function Command({
 }>) {
   useEffect(() => {
     async function pickAndHandleColor() {
+      const { pickColor } = await import("swift:../swift/color-picker");
+
       try {
         const pickedColor = (await pickColor()) as Color | undefined;
         if (!pickedColor) {

@@ -209,10 +209,10 @@
     }
   ],
   "dependencies": {
-    "@raycast/api": "^1.104.3",
+    "@raycast/api": "^1.104.5",
     "@raycast/utils": "^2.2.2",
     "color-namer": "^1.4.0",
-    "colorjs.io": "^0.5.2",
+    "colorjs.io": "^0.5.1",
     "lodash": "^4.17.23",
     "raycast-cross-extension": "^0.2.3"
   },
@@ -228,7 +228,7 @@
     "typescript": "^5.9.2"
   },
   "scripts": {
-    "build": "ray build -e dist",
+    "build": "ray build",
     "dev": "ray develop",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
@@ -236,6 +236,7 @@
     "publish": "ray publish"
   },
   "platforms": [
-    "macOS"
+    "macOS",
+    "Windows"
   ]
 }

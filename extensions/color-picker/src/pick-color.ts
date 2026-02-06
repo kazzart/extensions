@@ -2,8 +2,7 @@ import { Clipboard, closeMainWindow, launchCommand, LaunchType, getPreferenceVal
 import { showFailureToast } from "@raycast/utils";
 import { callbackLaunchCommand } from "raycast-cross-extension";
 import colorNamer from "color-namer";
-import { pickColor } from "swift:../swift/color-picker";
-import { addToHistory } from "./history";
+import { addToHistory } from "./lib/history";
 import { Color, PickColorCommandLaunchProps } from "./types";
 import { getFormattedColor, getColorByProximity } from "./utils";
 
@@ -12,6 +11,8 @@ export default async function command(props: PickColorCommandLaunchProps) {
   await closeMainWindow();
 
   try {
+    const { pickColor } = await import("swift:../swift/color-picker");
+
     const pickedColor = (await pickColor()) as Color | undefined;
     if (!pickedColor) {
       return;

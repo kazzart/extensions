@@ -1,7 +1,7 @@
 import { AI, Action, ActionPanel, Grid, LaunchProps } from "@raycast/api";
 import { showFailureToast, useAI } from "@raycast/utils";
 import CopyAsSubmenu from "./components/CopyAsSubmenu";
-import { addToHistory } from "./history";
+import { addToHistory } from "./lib/history";
 import { getFormattedColor, getPreviewColor } from "./utils";
 
 export default function GenerateColors(props: LaunchProps<{ arguments: Arguments.GenerateColors }>) {

@@ -1,7 +1,7 @@
 import { Cache } from "@raycast/api";
 import { useCachedState } from "@raycast/utils";
-import { HistoryColor, HistoryItem } from "./types";
-import { getFormattedColor } from "./utils";
+import { HistoryColor, HistoryItem } from "../types";
+import { getFormattedColor } from "../utils";
 
 const MAX_HISTORY_LENGTH = 200;
 

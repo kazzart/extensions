@@ -9,7 +9,7 @@ import {
   showHUD,
 } from "@raycast/api";
 import { showFailureToast } from "@raycast/utils";
-import { useHistory } from "./history";
+import { useHistory } from "./lib/history";
 import { getFormattedColor, getIcon, getPreviewColor, getShortcut } from "./utils";
 
 export default function Command() {
