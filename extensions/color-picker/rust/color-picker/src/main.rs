@@ -298,10 +298,6 @@ fn pick_color() -> std::result::Result<Option<Color>, String> {
         let _ = ShowWindow(input_hwnd, SW_SHOWNOACTIVATE);
         let _ = ShowWindow(hwnd, SW_SHOWNOACTIVATE);
 
-        // Bring input window to foreground to capture input
-        let _ = SetForegroundWindow(input_hwnd);
-        let _ = SetFocus(Some(input_hwnd));
-
         // Hide the real cursor
         let mut counter = ShowCursor(false);
         while counter >= 0 {

@@ -49,7 +49,8 @@ export default function Command() {
         const { extractColor: importedExtractColor } = await import("swift:../swift/extract-color");
         extractColor = importedExtractColor;
       } else {
-        // Windows side implementation using rust
+        const { extract_color: importedExtractColor } = await import("rust:../rust/extract-color");
+        extractColor = importedExtractColor;
       }
 
       extractColor(path, 40, false) // Set dominantOnly to true

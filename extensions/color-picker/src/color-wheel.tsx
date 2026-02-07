@@ -1,7 +1,7 @@
 import { Clipboard, closeMainWindow, Detail, LaunchProps, popToRoot, showHUD } from "@raycast/api";
 import { showFailureToast } from "@raycast/utils";
 import { callbackLaunchCommand, LaunchOptions } from "raycast-cross-extension";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { addToHistory } from "./lib/history";
 import { Color } from "./lib/types";
 import { getFormattedColor, isMac } from "./lib/utils";
@@ -14,15 +14,20 @@ export default function Command({
     callbackLaunchOptions?: LaunchOptions;
   };
 }>) {
+  const hasRun = useRef(false);
   useEffect(() => {
     async function pickAndHandleColor() {
       try {
+        if (hasRun.current) {
+          return;
+        }
+        hasRun.current = true;
         let pickColor: () => Promise<Color | undefined | null>;
         if (isMac) {
           const { pickColor: importedPickColor } = await import("swift:../swift/color-picker");
           pickColor = importedPickColor;
         } else {
-          const { pick_color: importedPickColor } = await import("rust:../rust");
+          const { pick_color: importedPickColor } = await import("rust:../rust/color-picker");
           pickColor = importedPickColor;
         }
         const pickedColor = (await pickColor()) as Color | undefined | null;

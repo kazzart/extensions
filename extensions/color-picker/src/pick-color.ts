@@ -6,7 +6,7 @@ import { addToHistory } from "./lib/history";
 import { Color, PickColorCommandLaunchProps } from "./lib/types";
 import { getFormattedColor, getColorByProximity, isMac } from "./lib/utils";
 
-export default async function command(props: PickColorCommandLaunchProps) {
+export default async function Command(props: PickColorCommandLaunchProps) {
   const { showColorName } = getPreferenceValues<Preferences.PickColor>();
   await closeMainWindow();
 
@@ -16,7 +16,7 @@ export default async function command(props: PickColorCommandLaunchProps) {
       const { pickColor: importedPickColor } = await import("swift:../swift/color-picker");
       pickColor = importedPickColor;
     } else {
-      const { pick_color: importedPickColor } = await import("rust:../rust");
+      const { pick_color: importedPickColor } = await import("rust:../rust/color-picker");
       pickColor = importedPickColor;
     }
 
