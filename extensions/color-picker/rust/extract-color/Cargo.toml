@@ -1,22 +1,14 @@
 [package]
-name = "color_picker"
+name = "extract_color"
 version = "0.1.0"
 edition = "2024"
 
 [[bin]]
-name = "color_picker"
-path = "src/main.rs"
+name = "extract_color"
+path = "src/extract-color.rs"
 
 [dependencies]
-windows = { version = "0.61.3", features = [
-    "Win32_Foundation",
-    "Win32_Graphics_Gdi",
-    "Win32_System_LibraryLoader",
-
-    "Win32_UI_HiDpi",
-    "Win32_UI_Input_KeyboardAndMouse",
-    "Win32_UI_WindowsAndMessaging",
-] }
+image = "0.25"
 raycast-rust-macros = { git = "https://github.com/raycast/extensions-rust-tools", package = "raycast-rust-macros", branch = "main" }
 raycast-rust-runtime = { git = "https://github.com/raycast/extensions-rust-tools", package = "raycast-rust-runtime", branch = "main" }
 serde = { version = "1.0", features = ["derive"] }

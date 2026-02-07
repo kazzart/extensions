@@ -1,12 +1,16 @@
 import { getSelectedText, LaunchProps, showToast, Toast, List, LocalStorage } from "@raycast/api";
 import { ColorConvertListItem } from "./components/ColorConvert";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export default function ConvertColor(props: LaunchProps) {
   const [colorText, setColorText] = useState<string | null>(props.arguments.text || null);
   const [lastConvertedColorFormat, setLastConvertedColorFormat] = useState<string | undefined>(undefined);
+  const hasInitialized = useRef(false);
 
   useEffect(() => {
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+
     async function getLastConvertedColorFormat() {
       const lastFormat = await LocalStorage.getItem<string>("lastConvertedColorFormat");
       setLastConvertedColorFormat(lastFormat);

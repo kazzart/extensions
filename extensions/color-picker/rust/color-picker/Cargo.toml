@@ -5,7 +5,7 @@ edition = "2024"
 
 [[bin]]
 name = "color_picker"
-path = "src/main.rs"
+path = "src/color_picker.rs"
 
 [dependencies]
 windows = { version = "0.61.3", features = [

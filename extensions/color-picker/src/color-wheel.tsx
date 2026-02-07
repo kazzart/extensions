@@ -14,21 +14,20 @@ export default function Command({
     callbackLaunchOptions?: LaunchOptions;
   };
 }>) {
-  const hasRun = useRef(false);
+  const hasInitialized = useRef(false);
   useEffect(() => {
     async function pickAndHandleColor() {
       try {
-        if (hasRun.current) {
-          return;
-        }
-        hasRun.current = true;
+        if (hasInitialized.current) return;
+        hasInitialized.current = true;
+
         let pickColor: () => Promise<Color | undefined | null>;
         if (isMac) {
-          const { pickColor: importedPickColor } = await import("swift:../swift/color-picker");
-          pickColor = importedPickColor;
+          const { pickColor: pickColorSwift } = await import("swift:../swift/color-picker");
+          pickColor = pickColorSwift;
         } else {
-          const { pick_color: importedPickColor } = await import("rust:../rust/color-picker");
-          pickColor = importedPickColor;
+          const { pick_color: pickColorRust } = await import("rust:../rust/color-picker");
+          pickColor = pickColorRust;
         }
         const pickedColor = (await pickColor()) as Color | undefined | null;
         if (!pickedColor) {
