@@ -2,7 +2,7 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "finetune",
   "title": "FineTune",
-  "description": "FineTune manage audio",
+  "description": "Manage per-app audio with FineTune",
   "icon": "finetune-icon.png",
   "license": "MIT",
   "commands": [
