@@ -24,7 +24,7 @@
       "name": "defaultDeviceUID",
       "type": "textfield",
       "required": false,
-      "title": "Default device UID",
+      "title": "Default Device UID",
       "description": "Optional. Used for the 'Default device' option in Route to Device.",
       "placeholder": "Paste device UID"
     },
