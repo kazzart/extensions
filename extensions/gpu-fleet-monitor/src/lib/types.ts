@@ -33,20 +33,6 @@ export interface HostStatus {
 export type TerminalApp = "ghostty" | "iterm" | "terminal";
 export type EditorApp = "cursor" | "vscode";
 
-export interface Preferences {
-  terminalApp?: TerminalApp;
-  editorApp?: EditorApp;
-  workPatterns?: string;
-  personalPatterns?: string;
-  workIdentityFiles?: string;
-  personalIdentityFiles?: string;
-  excludedHosts?: string;
-  defaultIdentityFile?: string;
-  defaultView?: "work" | "personal" | "all";
-  sshTimeout?: string;
-  refreshInterval?: string;
-}
-
 export const IDLE_UTIL = 1;
 export const IDLE_MEM_PCT = 3;
 

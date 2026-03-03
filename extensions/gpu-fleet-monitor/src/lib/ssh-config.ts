@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, globSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
 import { SSHHost } from "./types";
@@ -46,7 +46,11 @@ export function parseSSHConfig(configPath = SSH_CONFIG_PATH): RawHostEntry[] {
         const pattern = line.split(/\s+/, 2)[1];
         if (pattern) {
           const expanded2 = expandPath(pattern);
-          if (existsSync(expanded2)) {
+          if (expanded2.includes("*") || expanded2.includes("?")) {
+            for (const match of globSync(expanded2)) {
+              loadFile(match);
+            }
+          } else if (existsSync(expanded2)) {
             loadFile(expanded2);
           }
         }

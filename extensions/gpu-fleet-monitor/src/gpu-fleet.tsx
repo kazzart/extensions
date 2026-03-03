@@ -17,12 +17,12 @@ import {
   connectTerminalTmux,
   connectEditor,
   sshCommand,
+  sshTmuxCommand,
   TERMINAL_LABELS,
   EDITOR_LABELS,
 } from "./lib/actions";
 import {
   HostStatus,
-  Preferences,
   SSHHost,
   TerminalApp,
   EditorApp,
@@ -429,7 +429,7 @@ function TmuxSessionList({
               />
               <Action.CopyToClipboard
                 title="Copy Tmux Attach Command"
-                content={`ssh -t ${host.name} tmux attach -t ${session}`}
+                content={sshTmuxCommand(host, session)}
               />
             </ActionPanel>
           }

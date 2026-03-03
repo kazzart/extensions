@@ -13,8 +13,6 @@ import {
   hostExistsByUser,
   appendHostToConfig,
 } from "./lib/ssh-config";
-import { Preferences } from "./lib/types";
-
 export default function AddHost() {
   const prefs = getPreferenceValues<Preferences>();
   const defaultIdentity = prefs.defaultIdentityFile || "";

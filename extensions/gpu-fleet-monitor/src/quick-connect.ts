@@ -8,12 +8,7 @@ import {
 import { getHosts } from "./lib/ssh-config";
 import { probeHosts } from "./lib/monitor";
 import { connectTerminal, TERMINAL_LABELS } from "./lib/actions";
-import {
-  Preferences,
-  TerminalApp,
-  getExcludedHosts,
-  parseIdentityList,
-} from "./lib/types";
+import { TerminalApp, getExcludedHosts, parseIdentityList } from "./lib/types";
 
 export default async function QuickConnectBestGPU() {
   const prefs = getPreferenceValues<Preferences>();

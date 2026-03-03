@@ -1,4 +1,5 @@
 import { exec, execSync, spawn } from "child_process";
+import { existsSync } from "fs";
 import { SSHHost, TerminalApp, EditorApp } from "./types";
 
 function runAppleScript(script: string): void {
@@ -88,6 +89,9 @@ const EDITOR_BINS: Record<EditorApp, string[]> = {
 };
 
 function findBin(candidates: string[]): string {
+  for (const c of candidates) {
+    if (c.includes("/") && existsSync(c)) return c;
+  }
   return candidates[candidates.length - 1];
 }
 
