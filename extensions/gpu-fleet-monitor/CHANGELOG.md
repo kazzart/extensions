@@ -1,6 +1,6 @@
 # GPU Fleet Monitor Changelog
 
-## [Initial Version] - {PR_MERGE_DATE}
+## [1.0.0] - Initial Release
 
 - Monitor GPU and CPU usage across SSH hosts
 - Quick Connect to best available free GPU host
@@ -8,5 +8,5 @@
 - Add Host from SSH connection string
 - Support for Ghostty, iTerm, and macOS Terminal
 - Support for Cursor and VS Code remote SSH
-- Work/Personal host classification via patterns or identity files
-- Configurable excluded hosts, timeouts, and refresh intervals
+- Work / Personal host classification via identity files or patterns
+- Configurable preferences for excluded hosts, timeouts, and refresh intervals
