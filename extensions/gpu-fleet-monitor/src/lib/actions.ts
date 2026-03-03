@@ -95,7 +95,12 @@ function openInEditor(editor: EditorApp, host: SSHHost): void {
   const bin = findBin(EDITOR_BINS[editor]);
   exec(
     `"${bin}" --new-window --remote ssh-remote+${host.name}`,
-    { env: { ...process.env, PATH: `/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:${process.env.PATH || ""}` } },
+    {
+      env: {
+        ...process.env,
+        PATH: `/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:${process.env.PATH || ""}`,
+      },
+    },
     (err, _stdout, stderr) => {
       if (err) console.error(`${editor} error:`, err.message);
       if (stderr) console.error(`${editor} stderr:`, stderr);
@@ -109,9 +114,16 @@ export function connectTerminal(terminal: TerminalApp, host: SSHHost): void {
   openInTerminalApp(terminal, `ssh ${host.name}`);
 }
 
-export function connectTerminalTmux(terminal: TerminalApp, host: SSHHost, session: string): void {
+export function connectTerminalTmux(
+  terminal: TerminalApp,
+  host: SSHHost,
+  session: string,
+): void {
   const escaped = session.replace(/'/g, "'\\''");
-  openInTerminalApp(terminal, `ssh -t ${host.name} tmux attach -t '${escaped}'`);
+  openInTerminalApp(
+    terminal,
+    `ssh -t ${host.name} tmux attach -t '${escaped}'`,
+  );
 }
 
 export function connectEditor(editor: EditorApp, host: SSHHost): void {

@@ -1,8 +1,19 @@
-import { closeMainWindow, getPreferenceValues, showHUD, showToast, Toast } from "@raycast/api";
+import {
+  closeMainWindow,
+  getPreferenceValues,
+  showHUD,
+  showToast,
+  Toast,
+} from "@raycast/api";
 import { getHosts } from "./lib/ssh-config";
 import { probeHosts } from "./lib/monitor";
 import { connectTerminal, TERMINAL_LABELS } from "./lib/actions";
-import { Preferences, TerminalApp, getExcludedHosts, parseIdentityList } from "./lib/types";
+import {
+  Preferences,
+  TerminalApp,
+  getExcludedHosts,
+  parseIdentityList,
+} from "./lib/types";
 
 export default async function QuickConnectBestGPU() {
   const prefs = getPreferenceValues<Preferences>();
@@ -57,5 +68,7 @@ export default async function QuickConnectBestGPU() {
   const terminal: TerminalApp = prefs.terminalApp || "ghostty";
   await closeMainWindow();
   connectTerminal(terminal, best.host);
-  await showHUD(`Connecting to ${best.host.name} (${gpuDesc}) via ${TERMINAL_LABELS[terminal]}`);
+  await showHUD(
+    `Connecting to ${best.host.name} (${gpuDesc}) via ${TERMINAL_LABELS[terminal]}`,
+  );
 }

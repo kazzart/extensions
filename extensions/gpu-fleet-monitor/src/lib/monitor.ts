@@ -8,10 +8,14 @@ const KNOWN_HOSTS = join(homedir(), ".ssh", "known_hosts");
 
 function sshOpts(timeout: number): string[] {
   return [
-    "-o", "BatchMode=yes",
-    "-o", `ConnectTimeout=${timeout}`,
-    "-o", "StrictHostKeyChecking=accept-new",
-    "-o", `UserKnownHostsFile=${KNOWN_HOSTS}`,
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    `ConnectTimeout=${timeout}`,
+    "-o",
+    "StrictHostKeyChecking=accept-new",
+    "-o",
+    `UserKnownHostsFile=${KNOWN_HOSTS}`,
   ];
 }
 
@@ -54,7 +58,10 @@ fi
 `.trim();
 
 function parseOutput(stdout: string): Omit<HostStatus, "host" | "lastUpdated"> {
-  const lines = stdout.split("\n").map((l) => l.trim()).filter(Boolean);
+  const lines = stdout
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean);
 
   const gpus: GpuInfo[] = [];
   let gpuMemoryUsed = 0;
@@ -111,13 +118,15 @@ function parseOutput(stdout: string): Omit<HostStatus, "host" | "lastUpdated"> {
     }
   }
 
-  const memPct = gpuMemoryTotal > 0 ? (gpuMemoryUsed / gpuMemoryTotal) * 100 : 0;
+  const memPct =
+    gpuMemoryTotal > 0 ? (gpuMemoryUsed / gpuMemoryTotal) * 100 : 0;
   const isFree =
     gpuCount > 0 &&
     Math.round(gpuUtilization) <= IDLE_UTIL &&
     memPct <= IDLE_MEM_PCT;
 
-  const state: HostStatus["state"] = gpuCount === 0 ? "offline" : isFree ? "free" : "busy";
+  const state: HostStatus["state"] =
+    gpuCount === 0 ? "offline" : isFree ? "free" : "busy";
 
   return {
     state,
@@ -135,40 +144,41 @@ function parseOutput(stdout: string): Omit<HostStatus, "host" | "lastUpdated"> {
 
 export function probeHost(host: SSHHost, timeout: number): Promise<HostStatus> {
   return new Promise((resolve) => {
-    const args = [
-      ...sshOpts(timeout),
-      host.name,
-      REMOTE_SCRIPT,
-    ];
+    const args = [...sshOpts(timeout), host.name, REMOTE_SCRIPT];
 
-    execFile(SSH_BIN, args, {
-      timeout: (timeout + 2) * 1000,
-      maxBuffer: 1024 * 1024,
-    }, (error, stdout, stderr) => {
-      const now = Date.now();
+    execFile(
+      SSH_BIN,
+      args,
+      {
+        timeout: (timeout + 2) * 1000,
+        maxBuffer: 1024 * 1024,
+      },
+      (error, stdout, stderr) => {
+        const now = Date.now();
 
-      if (error) {
+        if (error) {
+          resolve({
+            host,
+            state: "offline",
+            gpus: [],
+            gpuMemoryUsed: 0,
+            gpuMemoryTotal: 0,
+            gpuUtilization: 0,
+            cpuUtilization: 0,
+            error: (stderr || error.message || "").substring(0, 200),
+            lastUpdated: now,
+          });
+          return;
+        }
+
+        const parsed = parseOutput(stdout || "");
         resolve({
           host,
-          state: "offline",
-          gpus: [],
-          gpuMemoryUsed: 0,
-          gpuMemoryTotal: 0,
-          gpuUtilization: 0,
-          cpuUtilization: 0,
-          error: (stderr || error.message || "").substring(0, 200),
+          ...parsed,
           lastUpdated: now,
         });
-        return;
-      }
-
-      const parsed = parseOutput(stdout || "");
-      resolve({
-        host,
-        ...parsed,
-        lastUpdated: now,
-      });
-    });
+      },
+    );
   });
 }
 
@@ -193,7 +203,9 @@ export function probeHostsStreaming(
 
   return {
     promise,
-    cancel: () => { cancelled = true; },
+    cancel: () => {
+      cancelled = true;
+    },
   };
 }
 
@@ -209,7 +221,10 @@ export async function probeHosts(
   return results;
 }
 
-export function getTmuxSessions(host: SSHHost, timeout: number): Promise<string[]> {
+export function getTmuxSessions(
+  host: SSHHost,
+  timeout: number,
+): Promise<string[]> {
   return new Promise((resolve) => {
     const args = [
       ...sshOpts(timeout),
@@ -217,18 +232,23 @@ export function getTmuxSessions(host: SSHHost, timeout: number): Promise<string[
       "tmux list-sessions -F '#{session_name}'",
     ];
 
-    execFile(SSH_BIN, args, {
-      timeout: (timeout + 3) * 1000,
-    }, (error, stdout) => {
-      if (error || !stdout) {
-        resolve([]);
-        return;
-      }
-      const sessions = stdout
-        .split("\n")
-        .map((s) => s.trim())
-        .filter(Boolean);
-      resolve(sessions);
-    });
+    execFile(
+      SSH_BIN,
+      args,
+      {
+        timeout: (timeout + 3) * 1000,
+      },
+      (error, stdout) => {
+        if (error || !stdout) {
+          resolve([]);
+          return;
+        }
+        const sessions = stdout
+          .split("\n")
+          .map((s) => s.trim())
+          .filter(Boolean);
+        resolve(sessions);
+      },
+    );
   });
 }

@@ -12,8 +12,23 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getHosts } from "./lib/ssh-config";
 import { probeHostsStreaming, getTmuxSessions } from "./lib/monitor";
-import { connectTerminal, connectTerminalTmux, connectEditor, sshCommand, TERMINAL_LABELS, EDITOR_LABELS } from "./lib/actions";
-import { HostStatus, Preferences, SSHHost, TerminalApp, EditorApp, getExcludedHosts, parseIdentityList } from "./lib/types";
+import {
+  connectTerminal,
+  connectTerminalTmux,
+  connectEditor,
+  sshCommand,
+  TERMINAL_LABELS,
+  EDITOR_LABELS,
+} from "./lib/actions";
+import {
+  HostStatus,
+  Preferences,
+  SSHHost,
+  TerminalApp,
+  EditorApp,
+  getExcludedHosts,
+  parseIdentityList,
+} from "./lib/types";
 
 export default function GpuFleet() {
   const prefs = getPreferenceValues<Preferences>();
@@ -22,7 +37,9 @@ export default function GpuFleet() {
   const terminal: TerminalApp = prefs.terminalApp || "ghostty";
   const editor: EditorApp = prefs.editorApp || "cursor";
 
-  const [viewFilter, setViewFilter] = useState<string>(prefs.defaultView || "work");
+  const [viewFilter, setViewFilter] = useState<string>(
+    prefs.defaultView || "work",
+  );
   const [statuses, setStatuses] = useState<Map<string, HostStatus>>(new Map());
   const [pendingCount, setPendingCount] = useState(0);
   const cancelRef = useRef<(() => void) | null>(null);
@@ -37,7 +54,13 @@ export default function GpuFleet() {
         personalIdentityFiles: parseIdentityList(prefs.personalIdentityFiles),
         excludedHosts: getExcludedHosts(prefs.excludedHosts),
       }),
-    [prefs.workPatterns, prefs.personalPatterns, prefs.workIdentityFiles, prefs.personalIdentityFiles, prefs.excludedHosts],
+    [
+      prefs.workPatterns,
+      prefs.personalPatterns,
+      prefs.workIdentityFiles,
+      prefs.personalIdentityFiles,
+      prefs.excludedHosts,
+    ],
   );
 
   const filteredHosts = useMemo(() => {
@@ -52,23 +75,19 @@ export default function GpuFleet() {
     let remaining = filteredHosts.length;
     setPendingCount(remaining);
 
-    const { cancel } = probeHostsStreaming(
-      filteredHosts,
-      timeout,
-      (status) => {
-        setStatuses((prev) => {
-          const next = new Map(prev);
-          next.set(status.host.name, status);
-          return next;
-        });
-        remaining--;
-        setPendingCount(remaining);
+    const { cancel } = probeHostsStreaming(filteredHosts, timeout, (status) => {
+      setStatuses((prev) => {
+        const next = new Map(prev);
+        next.set(status.host.name, status);
+        return next;
+      });
+      remaining--;
+      setPendingCount(remaining);
 
-        if (remaining <= 0) {
-          timerRef.current = setTimeout(startProbing, refreshSec * 1000);
-        }
-      },
-    );
+      if (remaining <= 0) {
+        timerRef.current = setTimeout(startProbing, refreshSec * 1000);
+      }
+    });
 
     cancelRef.current = cancel;
   }, [filteredHosts, timeout, refreshSec]);
@@ -162,21 +181,39 @@ export default function GpuFleet() {
       {free.length > 0 && (
         <List.Section title={`Free (${free.length})`}>
           {free.map((s) => (
-            <HostItem key={s.host.name} status={s} timeout={timeout} terminal={terminal} editor={editor} />
+            <HostItem
+              key={s.host.name}
+              status={s}
+              timeout={timeout}
+              terminal={terminal}
+              editor={editor}
+            />
           ))}
         </List.Section>
       )}
       {busy.length > 0 && (
         <List.Section title={`Busy (${busy.length})`}>
           {busy.map((s) => (
-            <HostItem key={s.host.name} status={s} timeout={timeout} terminal={terminal} editor={editor} />
+            <HostItem
+              key={s.host.name}
+              status={s}
+              timeout={timeout}
+              terminal={terminal}
+              editor={editor}
+            />
           ))}
         </List.Section>
       )}
       {offline.length > 0 && (
         <List.Section title={`Offline (${offline.length})`}>
           {offline.map((s) => (
-            <HostItem key={s.host.name} status={s} timeout={timeout} terminal={terminal} editor={editor} />
+            <HostItem
+              key={s.host.name}
+              status={s}
+              timeout={timeout}
+              terminal={terminal}
+              editor={editor}
+            />
           ))}
         </List.Section>
       )}
@@ -190,7 +227,10 @@ export default function GpuFleet() {
   );
 }
 
-function stateIcon(state: HostStatus["state"]): { source: Icon; tintColor: Color } {
+function stateIcon(state: HostStatus["state"]): {
+  source: Icon;
+  tintColor: Color;
+} {
   switch (state) {
     case "free":
       return { source: Icon.CircleFilled, tintColor: Color.Green };
@@ -266,7 +306,17 @@ function detailMarkdown(s: HostStatus): string {
   return lines.join("\n");
 }
 
-function HostItem({ status, timeout, terminal, editor }: { status: HostStatus; timeout: number; terminal: TerminalApp; editor: EditorApp }) {
+function HostItem({
+  status,
+  timeout,
+  terminal,
+  editor,
+}: {
+  status: HostStatus;
+  timeout: number;
+  terminal: TerminalApp;
+  editor: EditorApp;
+}) {
   const { push } = useNavigation();
   const s = status;
 
@@ -293,7 +343,9 @@ function HostItem({ status, timeout, terminal, editor }: { status: HostStatus; t
               shortcut={{ modifiers: ["cmd"], key: "return" }}
               onAction={() => {
                 connectEditor(editor, s.host);
-                showToast({ title: `Opening ${EDITOR_LABELS[editor]} for ${s.host.name}...` });
+                showToast({
+                  title: `Opening ${EDITOR_LABELS[editor]} for ${s.host.name}...`,
+                });
               }}
             />
             <Action
@@ -301,7 +353,13 @@ function HostItem({ status, timeout, terminal, editor }: { status: HostStatus; t
               icon={Icon.List}
               shortcut={{ modifiers: ["cmd", "shift"], key: "return" }}
               onAction={() => {
-                push(<TmuxSessionList host={s.host} timeout={timeout} terminal={terminal} />);
+                push(
+                  <TmuxSessionList
+                    host={s.host}
+                    timeout={timeout}
+                    terminal={terminal}
+                  />,
+                );
               }}
             />
           </ActionPanel.Section>
@@ -318,7 +376,15 @@ function HostItem({ status, timeout, terminal, editor }: { status: HostStatus; t
   );
 }
 
-function TmuxSessionList({ host, timeout, terminal }: { host: SSHHost; timeout: number; terminal: TerminalApp }) {
+function TmuxSessionList({
+  host,
+  timeout,
+  terminal,
+}: {
+  host: SSHHost;
+  timeout: number;
+  terminal: TerminalApp;
+}) {
   const [sessions, setSessions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -336,7 +402,10 @@ function TmuxSessionList({ host, timeout, terminal }: { host: SSHHost; timeout: 
   }, [host, timeout]);
 
   return (
-    <List isLoading={isLoading} navigationTitle={`Tmux sessions on ${host.name}`}>
+    <List
+      isLoading={isLoading}
+      navigationTitle={`Tmux sessions on ${host.name}`}
+    >
       {sessions.length === 0 && !isLoading && (
         <List.EmptyView
           title="No tmux sessions"

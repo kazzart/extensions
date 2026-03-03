@@ -34,13 +34,19 @@ export default function AddHost() {
 
     const result = parseSSHConnectionString(value);
     if (result) {
-      setParsed({ user: result.user, hostname: result.hostname, port: result.port });
+      setParsed({
+        user: result.user,
+        hostname: result.hostname,
+        port: result.port,
+      });
       if (!alias || alias === "") {
         setAlias(result.alias);
       }
     } else if (value.trim().length > 0) {
       setParsed(null);
-      setError("Could not parse SSH command. Expected format: ssh user@host -p port");
+      setError(
+        "Could not parse SSH command. Expected format: ssh user@host -p port",
+      );
     }
   }
 
@@ -75,7 +81,13 @@ export default function AddHost() {
     }
 
     try {
-      appendHostToConfig(finalAlias, parsed.hostname, parsed.user, parsed.port, defaultIdentity || undefined);
+      appendHostToConfig(
+        finalAlias,
+        parsed.hostname,
+        parsed.user,
+        parsed.port,
+        defaultIdentity || undefined,
+      );
       await showToast({
         style: Toast.Style.Success,
         title: "Host added",

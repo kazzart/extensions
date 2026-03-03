@@ -146,7 +146,13 @@ export function classifyHosts(
   entries: RawHostEntry[],
   opts: ClassifyOptions,
 ): SSHHost[] {
-  const { workPatterns, personalPatterns, workIdentityFiles = [], personalIdentityFiles = [], excludedHosts } = opts;
+  const {
+    workPatterns,
+    personalPatterns,
+    workIdentityFiles = [],
+    personalIdentityFiles = [],
+    excludedHosts,
+  } = opts;
 
   return entries
     .filter((e) => !excludedHosts.has(e.name) && e.name.length > 0)
@@ -160,9 +166,13 @@ export function classifyHosts(
         category = "personal";
       } else if (e.identityFile) {
         const norm = normalizeIdentityPath(e.identityFile);
-        if (personalIdentityFiles.some((p) => normalizeIdentityPath(p) === norm)) {
+        if (
+          personalIdentityFiles.some((p) => normalizeIdentityPath(p) === norm)
+        ) {
           category = "personal";
-        } else if (workIdentityFiles.some((p) => normalizeIdentityPath(p) === norm)) {
+        } else if (
+          workIdentityFiles.some((p) => normalizeIdentityPath(p) === norm)
+        ) {
           category = "work";
         }
       }
@@ -183,13 +193,12 @@ export function getHosts(opts: ClassifyOptions): SSHHost[] {
   return classifyHosts(raw, opts);
 }
 
-export function hostExistsByUser(user: string, hostname: string): string | null {
+export function hostExistsByUser(
+  user: string,
+  hostname: string,
+): string | null {
   const entries = parseSSHConfig();
-  const match = entries.find(
-    (e) =>
-      e.user === user &&
-      e.hostname === hostname,
-  );
+  const match = entries.find((e) => e.user === user && e.hostname === hostname);
   return match ? match.name : null;
 }
 
@@ -221,7 +230,11 @@ export function appendHostToConfig(
     ? readFileSync(SSH_CONFIG_PATH, "utf-8")
     : "";
 
-  writeFileSync(SSH_CONFIG_PATH, configContent.trimEnd() + "\n" + block, "utf-8");
+  writeFileSync(
+    SSH_CONFIG_PATH,
+    configContent.trimEnd() + "\n" + block,
+    "utf-8",
+  );
 }
 
 export interface ParsedSSHCommand {
