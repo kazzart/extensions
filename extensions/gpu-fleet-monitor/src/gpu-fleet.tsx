@@ -100,9 +100,10 @@ export default function GpuFleet() {
     };
   }, [startProbing]);
 
-  const { free, busy, offline, scanning } = useMemo(() => {
+  const { free, busy, noGpu, offline, scanning } = useMemo(() => {
     const free: HostStatus[] = [];
     const busy: HostStatus[] = [];
+    const noGpu: HostStatus[] = [];
     const offline: HostStatus[] = [];
     const scanning: SSHHost[] = [];
 
@@ -119,12 +120,15 @@ export default function GpuFleet() {
         case "busy":
           busy.push(status);
           break;
+        case "no-gpu":
+          noGpu.push(status);
+          break;
         default:
           offline.push(status);
       }
     }
 
-    return { free, busy, offline, scanning };
+    return { free, busy, noGpu, offline, scanning };
   }, [filteredHosts, statuses]);
 
   const isLoading = pendingCount > 0;
@@ -161,7 +165,7 @@ export default function GpuFleet() {
               actions={
                 <ActionPanel>
                   <Action
-                    title={`Connect via ${TERMINAL_LABELS[terminal]}`}
+                    title={`Connect Via ${TERMINAL_LABELS[terminal]}`}
                     icon={Icon.Terminal}
                     onAction={async () => {
                       await closeMainWindow();
@@ -204,6 +208,19 @@ export default function GpuFleet() {
           ))}
         </List.Section>
       )}
+      {noGpu.length > 0 && (
+        <List.Section title={`No GPU (${noGpu.length})`}>
+          {noGpu.map((s) => (
+            <HostItem
+              key={s.host.name}
+              status={s}
+              timeout={timeout}
+              terminal={terminal}
+              editor={editor}
+            />
+          ))}
+        </List.Section>
+      )}
       {offline.length > 0 && (
         <List.Section title={`Offline (${offline.length})`}>
           {offline.map((s) => (
@@ -236,6 +253,8 @@ function stateIcon(state: HostStatus["state"]): {
       return { source: Icon.CircleFilled, tintColor: Color.Green };
     case "busy":
       return { source: Icon.CircleFilled, tintColor: Color.Yellow };
+    case "no-gpu":
+      return { source: Icon.CircleFilled, tintColor: Color.Orange };
     default:
       return { source: Icon.CircleFilled, tintColor: Color.Red };
   }
@@ -255,6 +274,29 @@ function formatMB(mb: number): string {
 function detailMarkdown(s: HostStatus): string {
   if (s.state === "offline") {
     return `## ${s.host.name}\n\n**Status:** Offline\n\n${s.error ? `\`\`\`\n${s.error}\n\`\`\`` : ""}`;
+  }
+
+  if (s.state === "no-gpu") {
+    const lines: string[] = [];
+    lines.push(`## ${s.host.name}`);
+    lines.push("");
+    lines.push("**Status:** Online (no GPU detected)");
+    lines.push("");
+    if (s.cpuUtilization > 0) {
+      lines.push(`**CPU** ${Math.round(s.cpuUtilization)}%`);
+      lines.push("");
+    }
+    if (s.topCpuCwd) {
+      lines.push(`**CPU process** (PID ${s.topCpuPid}):`);
+      lines.push(`\`${s.topCpuCwd}\``);
+      lines.push("");
+    }
+    const updated = s.lastUpdated
+      ? new Date(s.lastUpdated).toLocaleTimeString()
+      : "never";
+    lines.push(`---`);
+    lines.push(`*${updated}*`);
+    return lines.join("\n");
   }
 
   const lines: string[] = [];
@@ -330,7 +372,7 @@ function HostItem({
         <ActionPanel>
           <ActionPanel.Section title="Connect">
             <Action
-              title={`Connect via ${TERMINAL_LABELS[terminal]}`}
+              title={`Connect Via ${TERMINAL_LABELS[terminal]}`}
               icon={Icon.Terminal}
               onAction={async () => {
                 await closeMainWindow();
@@ -338,7 +380,7 @@ function HostItem({
               }}
             />
             <Action
-              title={`Connect via ${EDITOR_LABELS[editor]}`}
+              title={`Connect Via ${EDITOR_LABELS[editor]}`}
               icon={Icon.Code}
               shortcut={{ modifiers: ["cmd"], key: "return" }}
               onAction={() => {

@@ -16,7 +16,7 @@ export interface GpuInfo {
 
 export interface HostStatus {
   host: SSHHost;
-  state: "free" | "busy" | "offline";
+  state: "free" | "busy" | "no-gpu" | "offline";
   gpus: GpuInfo[];
   gpuMemoryUsed: number;
   gpuMemoryTotal: number;
